@@ -137,6 +137,20 @@ export default function CircularCarousel() {
   });
   const activeApp = D_APPS[activeIndex];
 
+  const SHIMMER_COLORS = [
+    "#F2B01E", // 0 IRON MAN
+    "#D1FBD7", // 1 HULK
+    "#FBE4B0", // 2 SPIDER
+    "#A2A59E", // 3 CAPITAN
+    "#D5FEFE", // 4 THOR
+    "#95D0C4", // 5 WIDOW
+  ];
+  const shimmerColor = SHIMMER_COLORS[activeIndex % SHIMMER_COLORS.length];
+
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent('carousel-active-change', { detail: activeIndex }));
+  }, [activeIndex]);
+
   const handlePointerDown = (e: React.PointerEvent) => {
     isDraggingRef.current = true;
     lastXRef.current = e.clientX;
@@ -244,16 +258,39 @@ export default function CircularCarousel() {
            </motion.div>
          </AnimatePresence>
 
-         <button className="pointer-events-auto bg-white text-black font-normal uppercase text-[12px] leading-[16px] font-[system-ui] tracking-[0.2em] hover:scale-[1.02] transition-transform w-[160px] h-[54px] rounded-full shadow-[0_0_15px_rgba(255,255,255,0.7)] border-[4px] border-white/30 bg-clip-padding flex items-center justify-center ml-[18px]">
-           LAUNCH
-         </button>
+         <motion.button 
+           key={activeIndex}
+           initial={{ "--x": "100%" } as any}
+           animate={{ "--x": "-100%" } as any}
+           transition={{
+             delay: 0.8,
+             type: "spring",
+             stiffness: 20,
+             damping: 15,
+             mass: 2,
+           }}
+           className="relative pointer-events-auto bg-white text-black font-normal uppercase text-[12px] leading-[16px] font-[system-ui] tracking-[0.2em] hover:scale-[1.02] transition-transform w-[160px] h-[54px] rounded-full shadow-[0_0_15px_rgba(255,255,255,0.7)] border-[4px] border-transparent bg-clip-padding flex items-center justify-center ml-[18px]"
+         >
+           <span className="absolute inset-[-4px] rounded-[inherit] border-[4px] border-white/30 pointer-events-none z-0"></span>
+           <span className="relative z-20">LAUNCH</span>
+           <span
+             style={{
+               mask: "linear-gradient(#000, #000) content-box, linear-gradient(#000, #000)",
+               WebkitMask: "linear-gradient(#000, #000) content-box, linear-gradient(#000, #000)",
+               WebkitMaskComposite: "xor",
+               maskComposite: "exclude",
+               backgroundImage: `linear-gradient(-75deg, transparent calc(var(--x) + 20%), ${shimmerColor} calc(var(--x) + 25%), transparent calc(var(--x) + 100%))`
+             }}
+             className="absolute inset-[-4px] z-10 block rounded-[inherit] p-[4px] pointer-events-none"
+           ></span>
+         </motion.button>
       </div>
 
       {/* Interactive Floating Menu (See All Apps & Thumbnails) */}
       <div className="absolute bottom-6 left-6 md:bottom-10 md:left-16 lg:bottom-10 lg:left-auto lg:right-10 flex flex-col items-start lg:items-end z-50 pointer-events-none">
         {/* See All Apps text here... */}
         <div className="flex items-center space-x-2 text-white font-bold uppercase tracking-widest text-sm mb-2 ml-[18px] lg:ml-0 lg:mr-[18px] pointer-events-auto cursor-pointer hover:text-gray-300">
-          <span className="font-normal font-[system-ui] text-[12px] leading-[16px]">See All Apps</span>
+          <span className="font-normal font-[system-ui] text-[12px] leading-[16px]">See All</span>
           <span>►</span>
         </div>
         <div className="flex space-x-2 md:space-x-3 pointer-events-auto max-w-[90vw] overflow-x-auto px-4 pb-4 pt-2 -mb-4 shrink-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>

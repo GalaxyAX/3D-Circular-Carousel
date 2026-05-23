@@ -1,11 +1,11 @@
 import Header from '@/components/hero/Header';
-import BackgroundEffects from '@/components/hero/BackgroundEffects';
+import ProceduralGroundBackground from '@/components/ui/procedural-ground-background';
 import CircularCarousel from '@/components/hero/CircularCarousel';
 
 export default function Home() {
   return (
-    <main className="relative h-screen w-full overflow-hidden bg-[#353A1B] text-white flex flex-col font-sans">
-      <BackgroundEffects />
+    <main className="relative h-screen w-full overflow-hidden flex flex-col text-white font-sans">
+      <ProceduralGroundBackground />
       <Header />
       
       {/* 3D Circular Carousel Overlay */}

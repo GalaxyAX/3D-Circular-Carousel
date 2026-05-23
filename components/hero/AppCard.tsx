@@ -69,7 +69,7 @@ export default function AppCard({ title, category, desc, img, angle, radius = 12
                   }}
                 >
                    <div 
-                      className="absolute top-0 bottom-0 bg-[#050505] border-[1.5px] border-white/15 rounded-[16px]"
+                      className="absolute top-0 bottom-0 bg-[#050505] rounded-[16px]"
                       style={{
                          width: `${cardWidth}px`,
                          left: '50%',
@@ -117,7 +117,7 @@ export default function AppCard({ title, category, desc, img, angle, radius = 12
                   }}
                 >
                    <div 
-                      className="absolute top-0 bottom-0 bg-[#050505] border-[1.5px] border-white/5 rounded-[16px]"
+                      className="absolute top-0 bottom-0 bg-[#050505] rounded-[16px]"
                       style={{
                          width: `${cardWidth}px`,
                          left: '50%',
