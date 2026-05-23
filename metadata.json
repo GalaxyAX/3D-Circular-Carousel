@@ -1,6 +1,6 @@
 {
-  "name": "Apechain Hero",
-  "description": "A highly interactive, ultra-premium 3D hero page capturing the design, lighting, and rotational physics of the Apechain web3 landing experience.",
+  "name": "Heroverse Hero",
+  "description": "A highly interactive, ultra-premium 3D hero page capturing the design, lighting, and rotational physics of the Heroverse landing experience.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

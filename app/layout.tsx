@@ -5,7 +5,7 @@ import './globals.css'; // Global styles
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
-  title: 'Apechain Hero',
+  title: 'Heroverse Hero',
   description: 'The Place to Ape',
 };
 

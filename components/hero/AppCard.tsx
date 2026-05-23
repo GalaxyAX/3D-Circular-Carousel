@@ -46,7 +46,7 @@ export default function AppCard({ title, category, desc, img, angle, radius = 12
       style={{
         transformStyle: 'preserve-3d',
       }}
-      className="absolute w-[85vw] h-[60vh] -ml-[42.5vw] -mt-[30vh] md:w-[860px] md:h-[500px] md:-ml-[430px] md:-mt-[250px] group pointer-events-none select-none"
+      className="absolute w-[860px] h-[500px] -ml-[430px] -mt-[250px] group pointer-events-none select-none"
     >
       <div className="w-full h-full relative" style={{ transformStyle: 'preserve-3d' }}>
          {Array.from({ length: SLICES }).map((_, i) => {

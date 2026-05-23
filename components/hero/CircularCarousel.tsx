@@ -6,14 +6,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import AppCard from './AppCard';
 
 const D_APPS = [
-  { title: "APECHURCH", category: "Games", desc: "FULLY DECENTRALIZED, NON-CUSTODIAL GAMING HUB BUILT ON APECHAIN", img: "https://picsum.photos/seed/churchy/1600/900" },
-  { title: "CLUTCH", category: "Finance", desc: "Decentralized parlay platform.", img: "https://picsum.photos/seed/clutchy/1600/900" },
-  { title: "OTHERSIDE", category: "Metaverse", desc: "Web3-enabled virtual worlds.", img: "https://picsum.photos/seed/othersidey/1600/900" },
-  { title: "OPENSEA", category: "Collectibles", desc: "Trade ApeChain NFTs.", img: "https://picsum.photos/seed/openseay/1600/900" },
-  { title: "CAMELOT", category: "Exchange", desc: "Decentralized exchange.", img: "https://picsum.photos/seed/cameloty/1600/900" },
-  { title: "BLEVER", category: "Launchpad", desc: "NFT launchpad.", img: "https://picsum.photos/seed/blevery/1600/900" },
-  { title: "EXPRESS", category: "Memecoins", desc: "Memecoin toolkit.", img: "https://picsum.photos/seed/expressy/1600/900" },
-  { title: "APESCAN", category: "Explorer", desc: "ApeChain's Block Explorer.", img: "https://picsum.photos/seed/scany/1600/900" },
+  { title: "IRON MAN", category: "Tech", desc: "Powered by Genius", img: "/iron-man.jpg" },
+  { title: "HULK", category: "Strength", desc: "Unleash the Rage", img: "/hulk.jpg" },
+  { title: "SPIDER", category: "Agility", desc: "Friendly Neighborhood Hero", img: "/spider.jpg" },
+  { title: "CAPITAN", category: "Leadership", desc: "Honor Above All", img: "/capitan.jpg" },
+  { title: "THOR", category: "Thunder", desc: "God of Thunder", img: "/thor.jpg" },
+  { title: "WIDOW", category: "Stealth", desc: "Silent Deadly Precision", img: "/widow.jpg" },
 ];
 
 export default function CircularCarousel() {
@@ -25,13 +23,14 @@ export default function CircularCarousel() {
   const animationFrameRef = useRef<number>(0);
   const targetRotationRef = useRef<number | null>(null);
 
-  const [radius, setRadius] = useState(1200);
+  const [scale, setScale] = useState(1);
+  const radius = 900;
 
   const activeIndexRef = useRef(0);
 
   useEffect(() => {
     const handleResize = () => {
-      setRadius(window.innerWidth < 768 ? 400 : 1200);
+      setScale(window.innerWidth < 768 ? 0.35 : window.innerWidth < 1024 ? 0.65 : 1);
     };
     handleResize();
     window.addEventListener('resize', handleResize);
@@ -188,8 +187,8 @@ export default function CircularCarousel() {
       style={{ perspective: '2000px' }}
     >
       <div 
-        className="absolute top-1/2 left-1/2 w-0 h-0"
-        style={{ transformStyle: 'preserve-3d', transform: `rotateX(6deg) rotateZ(-3deg) translateZ(-${radius}px)` }}
+        className="absolute top-[35%] md:top-[45%] lg:top-1/2 left-1/2 w-0 h-0"
+        style={{ transformStyle: 'preserve-3d', transform: `scale(${scale}) rotateX(6deg) rotateZ(-3deg) translateZ(-${radius}px)` }}
       >
         {D_APPS.map((app, index) => {
           const cardAngle = (index * (360 / D_APPS.length)) + rotation;

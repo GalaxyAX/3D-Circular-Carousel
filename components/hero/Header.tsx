@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 
-const navLinks = ['Explore', 'Learn', 'Build', 'Bridge'];
+const navLinks = ['Heroes', 'Battles', 'Powers', 'Universe'];
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -23,7 +23,7 @@ export default function Header() {
 
       {/* Logo - Center on mobile, Left on md */}
       <div className="absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0 md:left-auto text-white tracking-tighter uppercase border-4 border-white px-3 py-1 bg-black/20 backdrop-blur-sm font-bold text-[25px] font-[system-ui] z-40">
-        APECHAIN
+        HEROVERSE
       </div>
       
       {/* Desktop Nav - Hidden on mobile, right of logo on tablet, Center on desktop */}
@@ -40,15 +40,15 @@ export default function Header() {
         ))}
       </nav>
 
-      {/* Mobile Dropdown Menu */}
+      {/* Fullscreen Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-[100px] left-0 right-0 bg-black/95 backdrop-blur-lg border-b border-white/10 md:hidden flex flex-col items-center py-8 space-y-8 z-30 shadow-2xl"
+            className="fixed inset-0 bg-black md:hidden flex flex-col items-center justify-center space-y-12 z-30"
           >
             {navLinks.map((link) => (
               <Link
