@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
+import Image from 'next/image';
+import { motion, AnimatePresence } from 'motion/react';
 import AppCard from './AppCard';
 
 const D_APPS = [
@@ -21,6 +23,7 @@ export default function CircularCarousel() {
   const velocityRef = useRef(0);
   const lastXRef = useRef(0);
   const animationFrameRef = useRef<number>(0);
+  const targetRotationRef = useRef<number | null>(null);
 
   const [radius, setRadius] = useState(1200);
 
@@ -63,26 +66,53 @@ export default function CircularCarousel() {
       }
 
       if (!isDraggingRef.current) {
-        if (activeIndexRef.current !== newActiveIndex) {
-           activeIndexRef.current = newActiveIndex;
-           // The formula precisely covers the required distance while decaying to base speed
-           // Area under (V - baseSpeed) = -activeCardAngle
-           // V0 - baseSpeed = -activeCardAngle * (1 - friction) -> V0 = -activeCardAngle * 0.20 + baseSpeed
-           velocityRef.current = -activeCardAngle * 0.20 - 0.15;
+        if (targetRotationRef.current !== null) {
+           const diff = targetRotationRef.current - rotationRef.current;
+           
+           // Smooth ease-out (lerp) to avoid any overshooting (prevents reverse movement)
+           const ease = 1 - Math.pow(0.85, frameFactor);
+           const change = diff * ease;
+           
+           rotationRef.current += change;
+           velocityRef.current = change / frameFactor;
+
+           // Snap when very close and resume auto-scroll seamlessly
+           if (Math.abs(diff) < 0.5) {
+              rotationRef.current = targetRotationRef.current;
+              targetRotationRef.current = null;
+              velocityRef.current = -0.15; 
+           }
+           setRotation(rotationRef.current);
+        } else {
+          activeIndexRef.current = newActiveIndex;
+          
+          const baseSpeed = -0.15; // Faster default speed
+        const switchAngle = 180 / D_APPS.length;
+        
+        // Calculate target velocity with an easy in-out boost
+        let targetVelocity = baseSpeed;
+        if (activeCardAngle > 0) {
+            const factor = activeCardAngle / switchAngle; // 1 down to 0
+            // Sine wave creates a smooth acceleration and deceleration based on position
+            const boost = Math.sin(factor * Math.PI) * 2.5; 
+            targetVelocity = baseSpeed - Math.abs(boost);
         }
 
-        const baseSpeed = -0.15; // Faster default speed
+        // Smoothly interpolate current velocity to target velocity to preserve drag inertia
+        // but lock on quickly during auto-rotation for precise easing
+        const isDiverging = Math.abs(velocityRef.current - targetVelocity) > 0.5;
+        const frictionRate = isDiverging ? 0.85 : 0.4;
+        const friction = Math.pow(frictionRate, frameFactor);
         
-        // Use frameFactor to ensure same friction regardless of refresh rate
-        const friction = Math.pow(0.80, frameFactor);
-        
-        velocityRef.current = (velocityRef.current - baseSpeed) * friction + baseSpeed;
+        velocityRef.current = (velocityRef.current - targetVelocity) * friction + targetVelocity;
         
         // Apply velocity mapped to time
         rotationRef.current += velocityRef.current * frameFactor;
         
         setRotation(rotationRef.current);
+        }
       } else {
+        targetRotationRef.current = null;
         activeIndexRef.current = newActiveIndex;
       }
 
@@ -179,61 +209,76 @@ export default function CircularCarousel() {
       </div>
 
       {/* 2D Overlay UI for Active App */}
-      <div className="absolute bottom-10 left-6 md:bottom-16 md:left-16 z-50 pointer-events-none flex flex-col justify-end w-full max-w-xl">
-         <div className="flex items-center space-x-4 mb-4">
-            <div className="flex items-center space-x-1.5 font-bold text-white uppercase text-[16px] tracking-widest drop-shadow-md">
-               <span className="text-xl">🔥</span>
-               <span>HOT</span>
-            </div>
-            <div className="bg-[#444444]/60 backdrop-blur-md rounded-full px-4 py-1.5 text-[11px] font-black text-gray-200 uppercase tracking-widest border border-white/10 shadow-lg">
-              {activeApp.category}
-            </div>
-         </div>
-         
-         <div className="overflow-hidden">
-            <h3 
-              key={`title-${activeApp.title}`}
-              className="text-white font-black text-7xl md:text-[110px] uppercase tracking-tighter leading-[0.85] mb-5 drop-shadow-2xl animate-in slide-in-from-bottom-8 fade-in duration-500" 
-              style={{ fontFamily: 'Impact, sans-serif, var(--font-sans)', transform: 'scaleY(1.15)', transformOrigin: 'bottom left' }}
-            >
-              {activeApp.title}
-            </h3>
-         </div>
-         
-         <p 
-            key={`desc-${activeApp.title}`}
-            className="text-gray-200 text-sm md:text-[15px] max-w-md uppercase font-semibold leading-relaxed tracking-wider mb-8 drop-shadow-md animate-in fade-in duration-700"
-         >
-           {activeApp.desc}
-         </p>
+      <div className="absolute bottom-[140px] left-6 md:bottom-[140px] md:left-16 lg:bottom-16 z-50 pointer-events-none flex flex-col justify-end w-full max-w-xl">
+         <AnimatePresence mode="wait">
+           <motion.div
+             key={activeApp.title}
+             initial={{ opacity: 0, y: 15 }}
+             animate={{ opacity: 1, y: 0 }}
+             exit={{ opacity: 0, y: -15 }}
+             transition={{ duration: 0.3 }}
+           >
+             <div className="flex items-center space-x-4 mb-[21px] ml-[18px]">
+                <div className="flex items-center space-x-1.5 font-normal font-sans text-white uppercase text-[12px] leading-[16px] tracking-[0.2em] drop-shadow-md">
+                   <span className="text-[16px] leading-[16px]">🔥</span>
+                   <span>HOT</span>
+                </div>
+                <div className="bg-[#444444]/60 backdrop-blur-md rounded-full px-4 py-1.5 font-normal font-sans text-[12px] leading-[16px] text-white uppercase tracking-[0.2em] border border-white/10 shadow-lg">
+                  {activeApp.category}
+                </div>
+             </div>
+             
+             <div className="overflow-visible ml-[18px]">
+                <h3 
+                  className="text-white font-black text-7xl md:text-[110px] uppercase tracking-tighter leading-[0.85] mb-[14px] drop-shadow-2xl" 
+                  style={{ fontFamily: 'Impact, sans-serif, var(--font-sans)', transform: 'scaleY(1.15)', transformOrigin: 'bottom left' }}
+                >
+                  {activeApp.title}
+                </h3>
+             </div>
+             
+             <p 
+                className="text-white font-normal font-sans text-[12px] leading-[16px] max-w-md uppercase tracking-[0.2em] mb-8 drop-shadow-md ml-[18px]"
+             >
+               {activeApp.desc}
+             </p>
+           </motion.div>
+         </AnimatePresence>
 
-         <button className="pointer-events-auto bg-white text-black font-black uppercase text-sm tracking-[0.2em] py-3.5 hover:scale-[1.02] transition-transform w-[220px] rounded-full shadow-[0_0_30px_rgba(255,255,255,0.7)] border-[4px] border-white/30 bg-clip-padding flex items-center justify-center">
+         <button className="pointer-events-auto bg-white text-black font-normal uppercase text-[12px] leading-[16px] font-[system-ui] tracking-[0.2em] hover:scale-[1.02] transition-transform w-[160px] h-[54px] rounded-full shadow-[0_0_15px_rgba(255,255,255,0.7)] border-[4px] border-white/30 bg-clip-padding flex items-center justify-center ml-[18px]">
            LAUNCH
          </button>
       </div>
 
       {/* Interactive Floating Menu (See All Apps & Thumbnails) */}
-      <div className="absolute bottom-10 right-6 md:bottom-10 md:right-10 flex flex-col items-end z-50 pointer-events-none">
+      <div className="absolute bottom-6 left-6 md:bottom-10 md:left-16 lg:bottom-10 lg:left-auto lg:right-10 flex flex-col items-start lg:items-end z-50 pointer-events-none">
         {/* See All Apps text here... */}
-        <div className="flex items-center space-x-2 text-white font-bold uppercase tracking-widest text-sm mb-4 pointer-events-auto cursor-pointer hover:text-gray-300">
-          <span>See All Apps</span>
+        <div className="flex items-center space-x-2 text-white font-bold uppercase tracking-widest text-sm mb-2 ml-[18px] lg:ml-0 lg:mr-[18px] pointer-events-auto cursor-pointer hover:text-gray-300">
+          <span className="font-normal font-[system-ui] text-[12px] leading-[16px]">See All Apps</span>
           <span>►</span>
         </div>
-        <div className="flex space-x-3 pointer-events-auto">
-          {D_APPS.slice(0, 5).map((app, index) => (
-             <div 
-               key={`thumb-${app.title}`} 
-               className={`w-14 h-14 rounded-xl overflow-hidden border-2 cursor-pointer transition-all ${index === 0 ? 'border-white scale-110' : 'border-white/20 hover:border-white/60 bg-black'}`}
-               onPointerDown={(e) => e.stopPropagation()}
-               onClick={() => {
-                  let targetAngle = -(index * (360 / D_APPS.length));
-                  rotationRef.current = targetAngle;
-                  setRotation(targetAngle);
-               }}
-             >
-                <img src={app.img} alt="" className={`w-full h-full object-cover ${index === 0 ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`} />
-             </div>
-          ))}
+        <div className="flex space-x-2 md:space-x-3 pointer-events-auto max-w-[90vw] overflow-x-auto px-4 pb-4 pt-2 -mb-4 shrink-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          {D_APPS.map((app, index) => {
+             const isActive = activeIndex === index;
+             return (
+               <div 
+                 key={`thumb-${app.title}`} 
+                 className={`w-10 h-10 md:w-11 md:h-11 shrink-0 rounded-xl overflow-hidden border-2 cursor-pointer transition-all duration-300 ${isActive ? 'border-white scale-110 shadow-[0_0_8px_rgba(255,255,255,0.15)]' : 'border-white/20 scale-95 hover:border-white/60 hover:scale-100 bg-black'}`}
+                 onPointerDown={(e) => e.stopPropagation()}
+                 onClick={() => {
+                    let targetAngle = -(index * (360 / D_APPS.length));
+                    const currentMod = rotationRef.current % 360;
+                    const diff = (targetAngle - currentMod);
+                    let normalizedDiff = diff % 360;
+                    if (normalizedDiff > 180) normalizedDiff -= 360;
+                    if (normalizedDiff < -180) normalizedDiff += 360;
+                    targetRotationRef.current = rotationRef.current + normalizedDiff;
+                 }}
+               >
+                  <Image src={app.img} alt={app.title} width={56} height={56} className={`w-full h-full object-cover transition-opacity duration-300 ${isActive ? 'opacity-100' : 'opacity-40 hover:opacity-80'}`} />
+               </div>
+             );
+          })}
         </div>
       </div>
     </div>
