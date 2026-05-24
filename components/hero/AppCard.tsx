@@ -36,7 +36,7 @@ export default function AppCard({ title, category, desc, img, angle, radius = 12
     return () => observer.disconnect();
   }, []);
 
-  const SLICES = 24; 
+  const SLICES = 12; 
   const sliceWidthPx = cardWidth / SLICES;
 
   return (
