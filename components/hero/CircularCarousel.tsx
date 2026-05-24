@@ -9,7 +9,7 @@ const D_APPS = [
   { title: "IRON MAN", category: "Tech", desc: "Powered by Genius", img: "/iron-man.jpg" },
   { title: "HULK", category: "Strength", desc: "Unleash the Rage", img: "/hulk.jpg" },
   { title: "SPIDER", category: "Agility", desc: "Friendly Neighborhood Hero", img: "/spider.jpg" },
-  { title: "CAPITAN", category: "Leadership", desc: "Honor Above All", img: "/capitan.jpg" },
+  { title: "CAPTAIN", category: "Leadership", desc: "Honor Above All", img: "/captain.jpg" },
   { title: "THOR", category: "Thunder", desc: "God of Thunder", img: "/thor.jpg" },
   { title: "WIDOW", category: "Stealth", desc: "Silent Deadly Precision", img: "/widow.jpg" },
 ];
@@ -141,7 +141,7 @@ export default function CircularCarousel() {
     "#F2B01E", // 0 IRON MAN
     "#D1FBD7", // 1 HULK
     "#FBE4B0", // 2 SPIDER
-    "#A2A59E", // 3 CAPITAN
+    "#A2A59E", // 3 CAPTAIN
     "#D5FEFE", // 4 THOR
     "#95D0C4", // 5 WIDOW
   ];
