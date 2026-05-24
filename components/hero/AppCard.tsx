@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import React, { useState, useRef, useEffect } from 'react';
 
 interface AppCardProps {
@@ -69,7 +68,7 @@ export default function AppCard({ title, category, desc, img, angle, radius = 12
                   }}
                 >
                    <div 
-                      className="absolute top-0 bottom-0 bg-[#050505] rounded-[16px]"
+                      className="absolute top-0 bottom-0 bg-[#050505] bg-cover bg-center"
                       style={{
                          width: `${cardWidth}px`,
                          left: '50%',
@@ -77,17 +76,9 @@ export default function AppCard({ title, category, desc, img, angle, radius = 12
                          marginLeft: `${-cardWidth / 2}px`,
                          backfaceVisibility: 'hidden',
                          WebkitBackfaceVisibility: 'hidden',
+                         backgroundImage: `url(${img})`
                       }}
                    >
-                      <Image 
-                        src={img} 
-                        alt={title} 
-                        fill
-                        className="object-cover"
-                        referrerPolicy="no-referrer"
-                        sizes="860px"
-                        draggable={false}
-                      />
                       
                       <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.5)_0%,rgba(255,255,255,0.02)_15%,rgba(255,255,255,0)_50%,rgba(255,255,255,0.02)_85%,rgba(0,0,0,0.5)_100%)] pointer-events-none mix-blend-overlay" />
 
@@ -117,7 +108,7 @@ export default function AppCard({ title, category, desc, img, angle, radius = 12
                   }}
                 >
                    <div 
-                      className="absolute top-0 bottom-0 bg-[#050505] rounded-[16px]"
+                      className="absolute top-0 bottom-0 bg-[#050505] bg-cover bg-center"
                       style={{
                          width: `${cardWidth}px`,
                          left: '50%',
@@ -126,17 +117,9 @@ export default function AppCard({ title, category, desc, img, angle, radius = 12
                          marginLeft: `${-cardWidth / 2}px`,
                          backfaceVisibility: 'hidden',
                          WebkitBackfaceVisibility: 'hidden',
+                         backgroundImage: `url(${img})`
                       }}
                    >
-                      <Image 
-                        src={img} 
-                        alt={title} 
-                        fill
-                        className="object-cover"
-                        referrerPolicy="no-referrer"
-                        sizes="860px"
-                        draggable={false}
-                      />
                       
                       {/* Make the backface visibly darker than the front */}
                       <div className="absolute inset-0 bg-black/60 pointer-events-none" />

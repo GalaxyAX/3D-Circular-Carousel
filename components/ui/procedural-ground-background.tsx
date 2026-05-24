@@ -172,6 +172,10 @@ const ProceduralGroundBackground: React.FC = () => {
     return () => {
       window.removeEventListener('carousel-active-change', handleActiveChange);
       cancelAnimationFrame(animationFrameId);
+      gl.deleteBuffer(buffer);
+      gl.deleteProgram(program);
+      const loseContext = gl.getExtension('WEBGL_lose_context');
+      if (loseContext) loseContext.loseContext();
     };
   }, []);
 
